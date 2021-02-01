@@ -2,6 +2,7 @@
 [![crates.io](https://img.shields.io/crates/v/sectok)](https://crates.io/crates/sectok)
 
 A Rust library to interact with [RFC 8959](https://tools.ietf.org/html/rfc8959) secret-token URIs.
+Inspired by [Lex Robinson's Python implementation](https://github.com/Lexicality/secret-token).
 
 See the RFC text for motivation and details.
 
