@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        version: [stable, beta, nightly]
+        version: [nightly]
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
