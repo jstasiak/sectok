@@ -10,3 +10,5 @@ repository = "https://github.com/jstasiak/sectok"
 
 [dependencies]
 percent-encoding = "2.*"
+regex = "1"
+lazy_static = "1.4"
