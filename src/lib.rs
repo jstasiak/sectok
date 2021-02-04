@@ -1,7 +1,7 @@
 //! A Rust library to interact with [RFC 8959](https://tools.ietf.org/html/rfc8959) secret-token URIs.
 //!
 //! See the RFC text for motivation and details.
-use percent_encoding::{percent_decode_str, percent_encode, AsciiSet, NON_ALPHANUMERIC};
+use percent_encoding::{percent_decode, percent_encode, AsciiSet, NON_ALPHANUMERIC};
 
 /// The URI scheme used.
 pub const SCHEME: &'static str = "secret-token";
@@ -49,19 +49,23 @@ pub fn encode(secret: &str) -> String {
 /// * Does not start with the [PREFIX](const.PREFIX)
 /// * Has no token
 /// * Has token that contains invalid percent-encoded UTF-8
-pub fn decode(uri: &str) -> Option<String> {
-    match uri.strip_prefix(PREFIX) {
-        Some("") => None,
-        Some(rest) => match percent_decode_str(rest).decode_utf8() {
+pub fn decode(uri: impl AsRef<[u8]>) -> Option<String> {
+    let uri = uri.as_ref();
+    if !uri.starts_with(PREFIX.as_bytes()) {
+        return None;
+    }
+    let uri = &uri[PREFIX.as_bytes().len()..];
+    match uri {
+        b"" => None,
+        rest => match percent_decode(&rest).decode_utf8() {
             Ok(decoded) => Some(decoded.into_owned()),
             Err(_) => None,
         },
-        None => None,
     }
 }
 
 /// Returns true if the URI is valid (this means it can be decoded), false otherwise.
-pub fn is_valid(uri: &str) -> bool {
+pub fn is_valid(uri: impl AsRef<[u8]>) -> bool {
     decode(uri).is_some()
 }
 
@@ -109,6 +113,8 @@ mod tests {
             println!("Testing {}", input);
             assert_eq!(decode(input).unwrap(), output);
             assert!(is_valid(input));
+            assert_eq!(decode(input.as_bytes()).unwrap(), output);
+            assert!(is_valid(input.as_bytes()));
         }
     }
 
@@ -118,6 +124,8 @@ mod tests {
             println!("Testing {}", input);
             assert!(decode(input).is_none());
             assert!(!is_valid(input));
+            assert!(decode(input.as_bytes()).is_none());
+            assert!(!is_valid(input.as_bytes()));
         }
     }
 
