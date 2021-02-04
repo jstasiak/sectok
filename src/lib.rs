@@ -64,11 +64,6 @@ pub fn decode(uri: impl AsRef<[u8]>) -> Option<String> {
     }
 }
 
-/// Returns true if the URI is valid (this means it can be decoded), false otherwise.
-pub fn is_valid(uri: impl AsRef<[u8]>) -> bool {
-    decode(uri).is_some()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -108,24 +103,20 @@ mod tests {
     }
 
     #[test]
-    fn test_decode_and_is_valid_work_with_valid_uris() {
+    fn test_decode_works_with_valid_uris() {
         for (input, output) in valid_pairs() {
             println!("Testing {}", input);
             assert_eq!(decode(input).unwrap(), output);
-            assert!(is_valid(input));
             assert_eq!(decode(input.as_bytes()).unwrap(), output);
-            assert!(is_valid(input.as_bytes()));
         }
     }
 
     #[test]
-    fn test_decode_and_is_valid_with_invalid_uris() {
+    fn test_decode_with_invalid_uris() {
         for input in invalid_uris() {
             println!("Testing {}", input);
             assert!(decode(input).is_none());
-            assert!(!is_valid(input));
             assert!(decode(input.as_bytes()).is_none());
-            assert!(!is_valid(input.as_bytes()));
         }
     }
 
