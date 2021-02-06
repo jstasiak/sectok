@@ -1,6 +1,8 @@
 //! A Rust library to interact with [RFC 8959](https://tools.ietf.org/html/rfc8959) secret-token URIs.
 //!
 //! See the RFC text for motivation and details.
+#![feature(test)]
+extern crate test;
 #[macro_use]
 extern crate lazy_static;
 use percent_encoding::{percent_decode, percent_encode, AsciiSet, NON_ALPHANUMERIC};
@@ -80,6 +82,7 @@ pub fn decode(uri: impl AsRef<[u8]>) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use test::{black_box, Bencher};
 
     fn valid_pairs() -> Vec<(&'static str, &'static str)> {
         vec![
@@ -161,5 +164,35 @@ mod tests {
                 assert_eq!(decoded.unwrap(), std::str::from_utf8(&bytes).unwrap());
             }
         }
+    }
+
+    #[bench]
+    fn bench_decoding_invalid_uris(b: &mut Bencher) {
+        let uris = invalid_uris();
+        b.iter(|| {
+            for uri in &uris {
+                black_box(decode(&uri));
+            }
+        });
+    }
+
+    #[bench]
+    fn bench_decoding_valid_uris(b: &mut Bencher) {
+        let uris: Vec<&str> = valid_pairs().into_iter().map(|(uri, _)| uri).collect();
+        b.iter(|| {
+            for uri in &uris {
+                black_box(decode(&uri));
+            }
+        });
+    }
+
+    #[bench]
+    fn bench_encoding(b: &mut Bencher) {
+        let tokens: Vec<&str> = valid_pairs().into_iter().map(|(_, token)| token).collect();
+        b.iter(|| {
+            for token in &tokens {
+                black_box(encode(&token));
+            }
+        });
     }
 }
