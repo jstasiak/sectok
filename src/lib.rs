@@ -36,7 +36,7 @@ const DISALLOWED_CHARACTERS: &AsciiSet = &NON_ALPHANUMERIC
 /// Encodes the secret into the secret-token URI.
 ///
 /// Non-ascii characters are UTF-8-encoded, disallowed characters then are percent-encoded,
-/// finally the [PREFIX](const.PREFIX) is prependend.
+/// finally the [PREFIX](const.PREFIX) is prepended.
 pub fn encode(secret: &str) -> String {
     format!(
         "{}{}",
