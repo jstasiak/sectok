@@ -1,6 +1,7 @@
 # sectok
 [![crates.io](https://img.shields.io/crates/v/sectok)](https://crates.io/crates/sectok)
 [![docs.rs](https://docs.rs/sectok/badge.svg)](https://docs.rs/sectok/)
+[![codecov](https://codecov.io/gh/jstasiak/sectok/branch/master/graph/badge.svg?token=U83QZ5OQTE)](https://codecov.io/gh/jstasiak/sectok)
 
 A Rust library to interact with [RFC 8959](https://tools.ietf.org/html/rfc8959) secret-token URIs.
 Inspired by [Lex Robinson's Python implementation](https://github.com/Lexicality/secret-token).
