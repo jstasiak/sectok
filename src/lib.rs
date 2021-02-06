@@ -1,6 +1,13 @@
 //! A Rust library to interact with [RFC 8959](https://tools.ietf.org/html/rfc8959) secret-token URIs.
 //!
 //! See the RFC text for motivation and details.
+//!
+//! # Validation
+//!
+//! There used to be a separate validation function provided in the library, but since the
+//! validation process needs to do the full decoding anyway that could lead to the library used in
+//! a suboptimal fashion. If you want to merely validate a piece of data use `decode()` and see if
+//! it returns `Some(_)` (URI valid) or `None` (URI invalid).
 #![feature(test)]
 extern crate test;
 #[macro_use]
@@ -49,11 +56,14 @@ pub fn encode(secret: &str) -> String {
 
 /// Decodes the secret-token URI into a secret.
 ///
-/// This function returns `None` when `uri`:
+/// This function accepts everything that can be efficiently treated as a byte slice (for example:
+/// `&str`, `String`, `Vec<u8>`). It returns an owned `String` on success and `None` when the
 ///
 /// * Does not start with the [PREFIX](const.PREFIX)
 /// * Has no token
 /// * Has token that contains invalid percent-encoded UTF-8
+/// * Has token that contains disallowed characters (not every character allowed by percent-encoding
+///   is permitted by the RFC)
 pub fn decode(uri: impl AsRef<[u8]>) -> Option<String> {
     let uri = uri.as_ref();
     if !uri.starts_with(PREFIX.as_bytes()) {
